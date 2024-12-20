@@ -1,8 +1,8 @@
 package com.sky.interceptor;
 
 import com.sky.constant.JwtClaimsConstant;
+import com.sky.constant.JwtParameterConstant;
 import com.sky.context.BaseContext;
-import com.sky.properties.JwtProperties;
 import com.sky.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
@@ -20,8 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 @Slf4j
 public class JwtTokenInterceptor implements HandlerInterceptor {
 
-    @Autowired
-    private JwtProperties jwtProperties;
+
     /**
      * 校验jwt
      *
@@ -37,20 +36,16 @@ public class JwtTokenInterceptor implements HandlerInterceptor {
             //当前拦截到的不是动态方法，直接放行
             return true;
         }
-
         //1、从请求头中获取令牌
-        String token = request.getHeader(jwtProperties.getTokenName());
+        String token = request.getHeader(JwtParameterConstant.JWT_TOKEN_NAME);
 
         //2、校验令牌
         try {
             log.info("jwt校验:{}", token);
-            Claims claims = JwtUtil.parseJWT(jwtProperties.getSecretKey(), token);
-            Long empId = Long.valueOf(claims.get(JwtClaimsConstant.EMP_ID).toString());
-            log.info("当前员工id：{}", empId);
-//            把当前发送请求的员工id存进ThreadLocal封装好的类中
-//            threadLocal类可以存储信息，只有在同一个线程中才能提取到信息
-//            前端的每一次请求都是一个新的线程 由此可以实现一些操作
-            BaseContext.setCurrentId(empId);
+            Claims claims = JwtUtil.parseJWT(JwtParameterConstant.JWT_SECRET_KEY, token);
+            Long userId = Long.valueOf(claims.get(JwtClaimsConstant.USER_ID).toString());
+            log.info("当前请求用户id：{}", userId);
+            BaseContext.setCurrentId(userId);
             //3、通过，放行
             return true;
         } catch (Exception ex) {
