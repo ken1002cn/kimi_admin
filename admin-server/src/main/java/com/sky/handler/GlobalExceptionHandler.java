@@ -22,7 +22,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler
     public Result exceptionHandler(Exception e){
         log.error("服务出现异常,信息：{}", e.getMessage());
-        return Result.error(e.getMessage());
+        return Result.error(e.getMessage(),500);
     }
 
 
