@@ -15,6 +15,7 @@ import com.sky.service.RoleService;
 import com.sky.vo.BasePageReqVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -50,7 +51,15 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, SysRole> implements
     }
 
     @Override
+    @Transactional
     public void deleteRole(Long id) {
-
+        //删除权限数据
+        LambdaQueryWrapper<SysRole> sysRoleWrapper = new LambdaQueryWrapper<>();
+        sysRoleWrapper.eq(SysRole::getId, id);
+        baseMapper.delete(sysRoleWrapper);
+        //删除关联数据
+        LambdaQueryWrapper<UserRole> userRoleWrapper = new LambdaQueryWrapper<>();
+        userRoleWrapper.eq(UserRole::getRoleId, id);
+        roleUserMapper.delete(userRoleWrapper);
     }
 }
