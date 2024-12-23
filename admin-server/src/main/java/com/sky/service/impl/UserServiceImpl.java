@@ -35,21 +35,19 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, SysUser> implements
     private RoleService roleService;
     @Autowired
     private RoleUserMapper roleUserMapper;
+
     @Override
     public String login(SysUser user) {
-        if (user.getPassword()!=null && user.getAccount()!=null){
-            LambdaQueryWrapper<SysUser> queryWrapper = new LambdaQueryWrapper<SysUser>();
-            queryWrapper.eq(SysUser::getAccount,user.getAccount());
-            queryWrapper.eq(SysUser::getPassword,user.getPassword());
-            SysUser sysUser = baseMapper.selectOne(queryWrapper);
-            if (sysUser!=null){
-                Map<String,Object> claims = new HashMap<>();
-                claims.put(JwtClaimsConstant.USER_ID,sysUser.getId());
-                return JwtUtil.createJWT(JwtParameterConstant.JWT_SECRET_KEY, JwtParameterConstant.JWT_TOKEN_TTL, claims);
-            }
-            return null;
+        LambdaQueryWrapper<SysUser> queryWrapper = new LambdaQueryWrapper<SysUser>();
+        queryWrapper.eq(SysUser::getAccount,user.getAccount());
+        queryWrapper.eq(SysUser::getPassword,user.getPassword());
+        SysUser sysUser = baseMapper.selectOne(queryWrapper);
+        if (sysUser!=null){
+            Map<String,Object> claims = new HashMap<>();
+            claims.put(JwtClaimsConstant.USER_ID,sysUser.getId());
+            return JwtUtil.createJWT(JwtParameterConstant.JWT_SECRET_KEY, JwtParameterConstant.JWT_TOKEN_TTL, claims);
         }
-        throw new RuntimeException("账号密码未传递");
+        return null;
     }
 
     @Override

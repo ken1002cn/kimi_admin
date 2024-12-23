@@ -1,4 +1,4 @@
-package com.sky.config.config;
+package com.sky.config;
 
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;

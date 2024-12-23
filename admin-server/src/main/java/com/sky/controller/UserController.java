@@ -17,14 +17,11 @@ public class UserController {
 
     @PostMapping("login")
     public Result login(@RequestBody SysUser user) {
-        if(user != null) {
-            String token = userService.login(user);
-            if(token != null) {
-                return Result.success(token);
-            }
-            return Result.error("账号密码不正确",500);
+        String token = userService.login(user);
+        if(token != null) {
+            return Result.success(token);
         }
-        return Result.error("登录信息传递不正确",401);
+        return Result.error("账号密码不正确",500);
     }
 
     @PostMapping("list")
