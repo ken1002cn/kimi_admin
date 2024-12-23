@@ -5,11 +5,9 @@ import com.sky.result.PageResult;
 import com.sky.result.Result;
 import com.sky.service.UserService;
 import com.sky.vo.BasePageReqVo;
+import com.sky.vo.UserSaveReqVo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("api/user/")
@@ -36,8 +34,18 @@ public class UserController {
     }
 
     @PostMapping("create")
-    public Result create(@RequestBody SysUser user) {
-        userService.save(user);
+    public Result create(@RequestBody UserSaveReqVo user) {
+        userService.saveUser(user);
+        return Result.success();
+    }
+    @GetMapping("delete/{id}")
+    public Result delete(@PathVariable("id") String id) {
+        userService.deleteUser(id);
+        return Result.success();
+    }
+    @GetMapping("status/{id}")
+    public Result status(@PathVariable("id") String id) {
+        userService.changeStatus(id);
         return Result.success();
     }
 }

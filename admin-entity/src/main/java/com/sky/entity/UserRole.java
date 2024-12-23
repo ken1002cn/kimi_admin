@@ -8,36 +8,21 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import java.io.Serializable;
+
 import java.util.Date;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@TableName("Sys_user")
-public class SysUser implements Serializable {
-    private static final long serialVersionUID = 1L;
+@TableName("Sys_user_role")
+public class UserRole {
     @TableId(type = IdType.AUTO)
-    private Long id;
-    @TableField("dept_id")
-    private Long deptId;
-    @TableField("nickname")
-    private String nickname;
-    @TableField("account")
-    private String account;
-    @TableField("password")
-    private String password;
-    @TableField("sex")
-    private String sex;
-    @TableField("phone")
-    private String phone;
-    @TableField("email")
-    private String email;
-    @TableField("status")
-    private String status;
-    @TableField("avatar")
-    private  String avatar;
+    private int id;
+    @TableField("user_id")
+    private Long userId;
+    @TableField("role_id")
+    private Long roleId;
     @TableField("create_time")
     private Date createTime;
     @TableField("create_by")
