@@ -18,7 +18,7 @@ import java.util.Date;
 @TableName("Sys_user_role")
 public class UserRole {
     @TableId(type = IdType.AUTO)
-    private int id;
+    private Long id;
     @TableField("user_id")
     private Long userId;
     @TableField("role_id")

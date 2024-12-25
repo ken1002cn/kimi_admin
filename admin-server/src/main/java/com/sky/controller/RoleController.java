@@ -7,17 +7,20 @@ import com.sky.vo.BasePageReqVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
+
 @RestController
 @RequestMapping("api/role/")
 public class RoleController {
     @Autowired
     private RoleService roleService;
-    @GetMapping("list")
-    public Result list(BasePageReqVo basePageReqVo) {
+    @PostMapping("list")
+    public Result list(@RequestBody BasePageReqVo basePageReqVo) {
         return Result.success(roleService.getPage(basePageReqVo));
     }
     @PostMapping("create")
     public Result create(@RequestBody SysRole role) {
+        role.setCreateTime(new Date());
         roleService.save(role);
         return Result.success();
     }

@@ -5,21 +5,23 @@ import com.sky.result.PageResult;
 import com.sky.result.Result;
 import com.sky.service.UserService;
 import com.sky.vo.BasePageReqVo;
+import com.sky.vo.LoginRespVo;
 import com.sky.vo.UserSaveReqVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("api/user/")
+@CrossOrigin
 public class UserController {
     @Autowired
     private UserService userService;
 
     @PostMapping("login")
     public Result login(@RequestBody SysUser user) {
-        String token = userService.login(user);
-        if(token != null) {
-            return Result.success(token);
+        LoginRespVo loginRespVo = userService.login(user);
+        if (loginRespVo != null) {
+            return Result.success(loginRespVo);
         }
         return Result.error("账号密码不正确",500);
     }

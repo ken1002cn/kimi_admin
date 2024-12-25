@@ -20,11 +20,13 @@ import java.util.Date;
 public class SysRole implements Serializable {
     private static final long serialVersionUID = 1L;
     @TableId(type = IdType.AUTO)
-    private int id;
+    private Long id;
     @TableField("role_name")
     private String roleName;
     @TableField("code")
     private String code;
+    @TableField("dept_id")
+    private Long deptId;
     @TableField("create_time")
     private Date createTime;
     @TableField("create_by")
@@ -33,4 +35,7 @@ public class SysRole implements Serializable {
     private Date updateTime;
     @TableField("update_by")
     private String updateBy;
+    //冗余一个字段不想写vo
+    @TableField(exist = false)
+    private String deptName;
 }

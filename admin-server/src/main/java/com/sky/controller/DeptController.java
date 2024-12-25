@@ -9,6 +9,8 @@ import com.sky.vo.BasePageReqVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
+
 @RestController
 @RequestMapping("api/dept/")
 public class DeptController {
@@ -18,13 +20,15 @@ public class DeptController {
 
     @PostMapping("create")
     public Result create(@RequestBody SysDept dept) {
+        dept.setCreateTime(new Date());
         deptService.save(dept);
         return Result.success();
     }
 
     @GetMapping("delete/{id}")
     public Result delete(@PathVariable Long id) {
-        return Result.success(deptService.deleteDept(id));
+        deptService.deleteDept(id);
+        return Result.success();
     }
 
     @PostMapping("list")

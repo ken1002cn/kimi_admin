@@ -18,6 +18,7 @@ import com.sky.service.RoleService;
 import com.sky.service.UserService;
 import com.sky.utils.JwtUtil;
 import com.sky.vo.BasePageReqVo;
+import com.sky.vo.LoginRespVo;
 import com.sky.vo.UserListRespVo;
 import com.sky.vo.UserSaveReqVo;
 import org.springframework.beans.BeanUtils;
@@ -37,15 +38,21 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, SysUser> implements
     private RoleUserMapper roleUserMapper;
 
     @Override
-    public String login(SysUser user) {
+    public LoginRespVo login(SysUser user) {
         LambdaQueryWrapper<SysUser> queryWrapper = new LambdaQueryWrapper<SysUser>();
         queryWrapper.eq(SysUser::getAccount,user.getAccount());
         queryWrapper.eq(SysUser::getPassword,user.getPassword());
         SysUser sysUser = baseMapper.selectOne(queryWrapper);
         if (sysUser!=null){
+            //账号密码有效 封装返回数据
             Map<String,Object> claims = new HashMap<>();
             claims.put(JwtClaimsConstant.USER_ID,sysUser.getId());
-            return JwtUtil.createJWT(JwtParameterConstant.JWT_SECRET_KEY, JwtParameterConstant.JWT_TOKEN_TTL, claims);
+            String token = JwtUtil.createJWT(JwtParameterConstant.JWT_SECRET_KEY, JwtParameterConstant.JWT_TOKEN_TTL, claims);
+            return LoginRespVo.builder()
+                    .token(token)
+                    .uid(sysUser.getId())
+                    .username(sysUser.getNickname())
+                    .build();
         }
         return null;
     }
@@ -58,7 +65,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, SysUser> implements
         }
         IPage<SysUser> iPage = baseMapper.selectPage(new Page<>(basePageReqVo.getPageNum(),basePageReqVo.getPageSize()),wrapper);
         List<SysUser> userDos = iPage.getRecords();
-        List<UserListRespVo.UserListRespVoBuilder> userListRespVoList = userDos.stream().map(user -> {
+        List<UserListRespVo> userListRespVoList = userDos.stream().map(user -> {
             //查询权限组
             String roles = roleService.getRoleString(user);
             String deptName = "";
@@ -82,8 +89,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, SysUser> implements
                     .createTime(user.getCreateTime())
                     .password(user.getPassword())
                     .email(user.getEmail())
-                    .status(user.getStatus());
-
+                    .status(user.getStatus())
+                    .build();
         }).collect(Collectors.toList());
         return new PageResult(iPage.getTotal(),userListRespVoList);
     }

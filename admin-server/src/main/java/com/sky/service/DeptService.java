@@ -6,7 +6,7 @@ import com.sky.result.PageResult;
 import com.sky.vo.BasePageReqVo;
 
 public interface DeptService extends IService<SysDept> {
-    String deleteDept(Long id);
+    void deleteDept(Long id);
 
     PageResult listDept(BasePageReqVo pageReqVo);
 }
