@@ -8,6 +8,7 @@ import com.sky.constant.JwtClaimsConstant;
 import com.sky.constant.JwtParameterConstant;
 import com.sky.constant.StatusConstant;
 import com.sky.entity.SysDept;
+import com.sky.entity.SysRole;
 import com.sky.entity.SysUser;
 import com.sky.entity.UserRole;
 import com.sky.mapper.DeptMapper;
@@ -24,6 +25,7 @@ import com.sky.vo.UserSaveReqVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -79,6 +81,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, SysUser> implements
                 }
             }
             return UserListRespVo.builder()
+                    .id(user.getId())
                     .account(user.getAccount())
                     .nickname(user.getNickname())
                     .avatar(user.getAvatar())
@@ -96,24 +99,35 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, SysUser> implements
     }
 
     @Override
+    @Transactional
     public void saveUser(UserSaveReqVo user) {
-        SysUser sysUser = new SysUser();
-        BeanUtils.copyProperties(user,sysUser);
+        SysUser sysUser = SysUser.builder()
+                .deptId(user.getDept())
+                .password(user.getPassword())
+                .account(user.getAccount())
+                .sex(user.getSex())
+                .email(user.getEmail())
+                .phone(user.getPhone())
+                .nickname(user.getNickname())
+                .createTime(new Date())
+                .build();
+        String status = user.isStatus()? "启用" : "停用";
+        sysUser.setStatus(status);
         sysUser.setCreateTime(new Date());
         baseMapper.insert(sysUser);
-        String roles = user.getRoles();
-        String[] role = roles.split(",");
-        for (String s : role) {
+        //关联用户角色
+        Long[] roles = user.getRoles();
+        for (Long role : roles) {
             UserRole userRole = UserRole.builder()
                     .userId(sysUser.getId())
-                    .roleId(Long.valueOf(s))
+                    .roleId(role)
                     .build();
-        roleUserMapper.insert(userRole);
+            roleUserMapper.insert(userRole);
         }
     }
 
     @Override
-    public void changeStatus(String id) {
+    public void changeStatus(Long id) {
         LambdaQueryWrapper<SysUser> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(SysUser::getId,id);
         SysUser sysUser = baseMapper.selectOne(wrapper);

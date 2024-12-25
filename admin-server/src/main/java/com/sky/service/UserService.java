@@ -16,7 +16,7 @@ public interface UserService extends IService<SysUser> {
 
     void saveUser(UserSaveReqVo user);
 
-    void changeStatus(String id);
+    void changeStatus(Long id);
 
     void deleteUser(String id);
 }

@@ -8,6 +8,8 @@ import com.sky.result.PageResult;
 import com.sky.vo.BasePageReqVo;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public interface RoleService extends IService<SysRole> {
     String getRoleString(SysUser user);
@@ -15,4 +17,6 @@ public interface RoleService extends IService<SysRole> {
     PageResult getPage(BasePageReqVo basePageReqVo);
 
     void deleteRole(Long id);
+
+    List<SysRole> getRoleByDeptId(Long deptId);
 }

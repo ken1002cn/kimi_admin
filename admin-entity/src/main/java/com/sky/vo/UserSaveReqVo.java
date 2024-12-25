@@ -13,14 +13,13 @@ import lombok.NoArgsConstructor;
 public class UserSaveReqVo {
 
     private Long id;
-    private Long deptId;
+    private Long dept;
     private String nickname;
     private String account;
     private String password;
     private String sex;
     private String phone;
     private String email;
-    private String status;
-    private  String avatar;
-    private String roles;
+    private boolean status;
+    private Long[] roles;
 }

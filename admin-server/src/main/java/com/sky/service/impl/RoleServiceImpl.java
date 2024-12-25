@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -26,6 +27,8 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, SysRole> implements
     private RoleUserMapper roleUserMapper;
     @Autowired
     private DeptMapper deptMapper;
+    @Autowired
+    private RoleMapper roleMapper;
     /**
      * 拼接权限字符串
      * @param user
@@ -66,5 +69,12 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, SysRole> implements
         LambdaQueryWrapper<UserRole> userRoleWrapper = new LambdaQueryWrapper<>();
         userRoleWrapper.eq(UserRole::getRoleId, id);
         roleUserMapper.delete(userRoleWrapper);
+    }
+
+    @Override
+    public List<SysRole> getRoleByDeptId(Long deptId) {
+        LambdaQueryWrapper<SysRole> sysRoleWrapper = new LambdaQueryWrapper<>();
+        sysRoleWrapper.eq(SysRole::getDeptId, deptId);
+        return roleMapper.selectList(sysRoleWrapper);
     }
 }

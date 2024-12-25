@@ -43,7 +43,7 @@ public class UserController {
         return Result.success();
     }
     @GetMapping("status/{id}")
-    public Result status(@PathVariable("id") String id) {
+    public Result status(@PathVariable Long id) {
         userService.changeStatus(id);
         return Result.success();
     }
