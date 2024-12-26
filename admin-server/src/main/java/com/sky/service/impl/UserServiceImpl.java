@@ -11,6 +11,7 @@ import com.sky.entity.SysDept;
 import com.sky.entity.SysRole;
 import com.sky.entity.SysUser;
 import com.sky.entity.UserRole;
+import com.sky.exception.LoginException;
 import com.sky.mapper.DeptMapper;
 import com.sky.mapper.RoleUserMapper;
 import com.sky.mapper.UserMapper;
@@ -40,23 +41,40 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, SysUser> implements
     private RoleUserMapper roleUserMapper;
 
     @Override
-    public LoginRespVo login(SysUser user) {
+    public LoginRespVo login(SysUser user){
         LambdaQueryWrapper<SysUser> queryWrapper = new LambdaQueryWrapper<SysUser>();
         queryWrapper.eq(SysUser::getAccount,user.getAccount());
         queryWrapper.eq(SysUser::getPassword,user.getPassword());
         SysUser sysUser = baseMapper.selectOne(queryWrapper);
         if (sysUser!=null){
-            //账号密码有效 封装返回数据
-            Map<String,Object> claims = new HashMap<>();
-            claims.put(JwtClaimsConstant.USER_ID,sysUser.getId());
-            String token = JwtUtil.createJWT(JwtParameterConstant.JWT_SECRET_KEY, JwtParameterConstant.JWT_TOKEN_TTL, claims);
-            return LoginRespVo.builder()
-                    .token(token)
-                    .uid(sysUser.getId())
-                    .username(sysUser.getNickname())
-                    .build();
+            String status = sysUser.getStatus();
+            if (status.equals(StatusConstant.ENABLE)){
+                //账号密码有效 封装返回数据
+                Map<String,Object> claims = new HashMap<>();
+                claims.put(JwtClaimsConstant.USER_ID,sysUser.getId());
+                claims.put(JwtClaimsConstant.ROLE,getRole(sysUser.getId()));
+                String token = JwtUtil.createJWT(JwtParameterConstant.JWT_SECRET_KEY, JwtParameterConstant.JWT_TOKEN_TTL, claims);
+                return LoginRespVo.builder()
+                        .token(token)
+                        .uid(sysUser.getId())
+                        .username(sysUser.getNickname())
+                        .build();
+            }
+           throw new RuntimeException("账号未启用");
         }
-        return null;
+       throw new LoginException("账号或密码错误");
+    }
+
+    private String getRole(Long id) {
+        LambdaQueryWrapper<UserRole> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(UserRole::getUserId,id);
+        List<UserRole> userRoles = roleUserMapper.selectList(queryWrapper);
+        StringBuilder roles = new StringBuilder();
+        userRoles.forEach(userRole -> {
+            SysRole byId = roleService.getById(userRole.getRoleId());
+            roles.append(byId.getCode()).append(",");
+        });
+        return roles.toString();
     }
 
     @Override
@@ -111,15 +129,24 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, SysUser> implements
                 .nickname(user.getNickname())
                 .createTime(new Date())
                 .build();
+
         String status = user.isStatus()? "启用" : "停用";
         sysUser.setStatus(status);
         sysUser.setCreateTime(new Date());
         baseMapper.insert(sysUser);
-        //关联用户角色
-        Long[] roles = user.getRoles();
+        createRelRole(user.getRoles(), sysUser.getId());
+    }
+
+    //关联用户角色
+    private void createRelRole(Long[] roles,Long userId){
+        //清除原有关系
+        LambdaQueryWrapper<UserRole> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(UserRole::getUserId,userId);
+        roleUserMapper.delete(queryWrapper);
+
         for (Long role : roles) {
             UserRole userRole = UserRole.builder()
-                    .userId(sysUser.getId())
+                    .userId(userId)
                     .roleId(role)
                     .build();
             roleUserMapper.insert(userRole);
@@ -150,5 +177,30 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, SysUser> implements
         LambdaQueryWrapper<UserRole> wrapper1 = new LambdaQueryWrapper<>();
         wrapper1.eq(UserRole::getUserId,id);
         roleUserMapper.delete(wrapper1);
+    }
+
+    @Override
+    public void updateUser(UserSaveReqVo user) {
+        SysUser sysUser = SysUser.builder()
+                .id(user.getId())
+                .deptId(user.getDept())
+                .password(user.getPassword())
+                .sex(user.getSex())
+                .email(user.getEmail())
+                .phone(user.getPhone())
+                .nickname(user.getNickname())
+                .updateTime(new Date())
+                .build();
+        baseMapper.updateById(sysUser);
+    }
+
+    @Override
+    public void updateUserRole(UserSaveReqVo user) {
+        SysUser sysUser = SysUser.builder()
+                .id(user.getId())
+                .deptId(user.getDept())
+                .build();
+        baseMapper.updateById(sysUser);
+        createRelRole(user.getRoles(), user.getId());
     }
 }

@@ -47,4 +47,16 @@ public class UserController {
         userService.changeStatus(id);
         return Result.success();
     }
+
+    @PostMapping("update")
+    public Result update(@RequestBody UserSaveReqVo user) {
+        userService.updateUser(user);
+        return Result.success();
+    }
+
+    @PostMapping("updateRole")
+    public Result updateRole(@RequestBody UserSaveReqVo user) {
+        userService.updateUserRole(user);
+        return Result.success();
+    }
 }

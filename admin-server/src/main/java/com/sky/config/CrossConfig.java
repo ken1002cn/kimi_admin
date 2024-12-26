@@ -3,6 +3,9 @@ package com.sky.config;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 
+/**
+ * 跨域配置
+ */
 @Configuration
 public class CrossConfig extends WebMvcConfiguration {
     @Override

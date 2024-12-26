@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 public class UserSaveReqVo {
-
     private Long id;
     private Long dept;
     private String nickname;
