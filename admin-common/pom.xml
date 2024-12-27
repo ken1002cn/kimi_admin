@@ -42,11 +42,9 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- MyBatis Plus Starter -->
         <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-boot-starter</artifactId>
-            <version>3.5.0</version> <!-- 版本可以根据需要选择 -->
         </dependency>
 
         <dependency>
