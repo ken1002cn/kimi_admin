@@ -1,1 +1,0 @@
-INSERT INTO `Sys_user` (`id`, `dept_id`, `account`, `nickname`, `password`, `email`, `sex`, `phone`, `avatar`, `status`, `create_time`, `create_by`, `update_time`, `update_by`) VALUES (1, 27, 'admin', '超级管理员', 'admin', NULL, NULL, NULL, NULL, '启用', NULL, NULL, '2024-12-26 01:43:40', NULL);
