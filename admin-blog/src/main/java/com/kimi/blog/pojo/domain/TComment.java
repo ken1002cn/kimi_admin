@@ -1,9 +1,8 @@
-package com.kimi.common.pojo.entity;
+package com.kimi.blog.pojo.domain;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,20 +14,17 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@TableName("sys_advice")
-public class Advice {
+public class TComment {
     @TableId(type = IdType.AUTO)
     private Long id;
-    @TableField("name")
-    private String name;
-    @TableField("advice")
-    private String advice;
-    @TableField("satisfaction")
-    private Integer satisfaction;
-    @TableField("feedbackReasonString")
-    private String feedbackReasonString;
-    @TableField(exist = false)
-    private String[] feedbackReasons;
+    @TableField("text")
+    private String text;
+    @TableField("articles_id")
+    private Long articlesId;
+    @TableField("up")
+    private Integer up;
+    @TableField("down")
+    private Integer down;
     @TableField("create_time")
     private Date createTime;
     @TableField("create_by")

@@ -32,7 +32,7 @@
 
         <dependency>
             <groupId>com.kimi</groupId>
-            <artifactId>admin-server</artifactId>
+            <artifactId>admin-blog</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
