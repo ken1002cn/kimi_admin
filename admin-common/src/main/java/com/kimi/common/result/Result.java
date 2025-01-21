@@ -43,4 +43,10 @@ public class Result<T> implements Serializable {
         return result;
     }
 
+    public static Result status(boolean flag) {
+        Result result = new Result();
+        result.code = flag ? 200 : 400;
+        result.msg = flag ? "成功" : "服务器未知异常";
+        return result;
+    }
 }

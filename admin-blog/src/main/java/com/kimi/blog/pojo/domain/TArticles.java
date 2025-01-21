@@ -27,6 +27,8 @@ public class TArticles {
     private Integer up;
     @TableField("down")
     private Integer down;
+    @TableField("status")
+    private Integer status;
     @TableField("create_time")
     private Date createTime;
     @TableField("create_by")

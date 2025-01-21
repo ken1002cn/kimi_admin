@@ -16,12 +16,10 @@ import java.util.Date;
 public class TExamine {
     @TableId(type = IdType.AUTO)
     private Long id;
-    @TableField("text")
-    private String text;
     @TableField("articles_id")
     private Long articlesId;
     @TableField("articles_tittle")
-    private Long articlesTittle;
+    private String articlesTittle;
     @TableField("reject_reason")
     private Integer rejectReason;
     @TableField("status")
